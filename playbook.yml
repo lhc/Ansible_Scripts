@@ -1,0 +1,77 @@
+- hosts: chirpstack
+  become: "{{ become | default('yes') }}"
+
+  tasks:
+
+    - name: Test ssh connection to the server
+      ping:
+
+    - name: Update & upgrade repository
+      apt:
+       update_cache: yes
+       upgrade: yes
+       autoremove: yes
+
+    - name: Add Docker GPG apt Key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker Repository
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu focal stable
+        state: present
+
+    - name: Update apt and install docker-ce
+      apt:
+        name: docker-ce
+        state: latest
+        update_cache: true
+    
+    - name: Install docker-compose
+      apt:
+        name: docker-compose
+        state: latest
+        update_cache: true
+
+    - name: Clone chirpstack docker compose
+      git:
+       repo: https://github.com/chirpstack/chirpstack-docker
+       dest: /home/ubuntu/chirpstack
+       clone: yes
+       update: yes
+       version: v3
+
+
+    - name: Create "docker" group
+      group:
+        name: docker
+        state: present
+
+
+    - name: Add remote "ubuntu" user to "docker" group
+      user:
+        name: ubuntu
+        groups: docker
+        append: yes
+
+    - name: Copy Network server configuration file
+      ansible.builtin.copy:
+        src: chirpstack-network-server.toml
+        dest: /home/ubuntu/chirpstack/configuration/chirpstack-network-server/chirpstack-network-server.toml
+        owner: root
+        group: root             
+        mode: 0644    
+
+    - name: Tear Downs Docker Compose stack
+      community.docker.docker_compose:
+        project_src: /home/ubuntu/chirpstack
+        files: docker-compose.yml
+        state: absent
+
+    - name: Create and start services
+      community.docker.docker_compose:
+        project_src: /home/ubuntu/chirpstack
+        files: docker-compose.yml
+        state: present
+
