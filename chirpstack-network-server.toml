@@ -1,0 +1,65 @@
+# See https://www.chirpstack.io/network-server/install/config/ for a full
+# configuration example and documentation.
+#
+# This file is for the EU868 band. See the examples/ folder for more
+# configuration examples.
+
+[postgresql]
+dsn="postgres://chirpstack_ns:chirpstack_ns@postgresql/chirpstack_ns?sslmode=disable"
+
+[redis]
+url="redis://redis:6379"
+
+[network_server]
+net_id="000000"
+
+[network_server.band]
+name="AU915"
+
+[network_server.network_settings]
+enabled_uplink_channels= [0, 1, 2, 3, 4, 5, 6, 7, 64]
+
+# A higher number means that the network-server will keep more margin,
+# resulting in a lower data-rate but decreasing the chance that the
+# device gets disconnected because it is unable to reach one of the
+# surrounded gateways.
+installation_margin=20
+
+# Class A RX1 delay
+#
+# 0=1sec, 1=1sec, ... 15=15sec. A higher value means ChirpStack Network Server has more
+# time to respond to the device as the delay between the uplink and the
+# first receive-window will be increased.
+rx1_delay=5
+
+# Prefer RX2 on link budget.
+#
+# When the link-budget is better for RX2 than for RX1, the Network Server will first
+# try to schedule the downlink in RX2, failing that it will try RX1.
+rx2_prefer_on_link_budget=false
+
+# Rejoin-request settings
+#
+# When enabled, ChirpStack Network Server will request the device to send a rejoin-request
+# every time when one of the 2 conditions below is met (frame count or time).
+[network_server.network_settings.rejoin_request]
+# Request device to periodically send rejoin-requests
+enabled=false
+
+# The device must send a rejoin-request type 0 at least every 2^(max_count_n + 4)
+# uplink messages. Valid values are 0 to 15.
+max_count_n=0
+
+# The device must send a rejoin-request type 0 at least every 2^(max_time_n + 10)
+# seconds. Valid values are 0 to 15.
+#
+# 0  = roughly 17 minutes
+# 15 = about 1 year
+max_time_n=0
+
+
+[network_server.gateway.backend.mqtt]
+server="tcp://mosquitto:1883"
+
+[join_server.default]
+server="http://chirpstack-application-server:8003"
