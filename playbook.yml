@@ -40,7 +40,7 @@
        dest: /home/ubuntu/chirpstack
        clone: yes
        update: yes
-       version: v3
+       version: v4
 
 
     - name: Create "docker" group
