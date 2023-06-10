@@ -32,7 +32,7 @@ pip install -r requirements.txt
 Activate the ansible enviroment and run
 
 ```
-ansible-playbook playbook.yml
+ansible-playbook deploy.yml
 ```
 
 After completing running the recipe access the server with port 8080

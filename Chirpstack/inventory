@@ -1,0 +1,11 @@
+[chirpstack]
+134.65.251.110     
+
+[chirpstack:vars]
+ansible_user = ubuntu
+#Change corresponding to the user o the VM
+
+
+
+
+

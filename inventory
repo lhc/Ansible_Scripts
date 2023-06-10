@@ -1,9 +1,0 @@
-[chirpstack]
-# Server IP Address  
-10.10.10.10
-
-
-[chirpstack:vars]
-ansible_user = ubuntu
-ansible_ssh_private_key_file = ~/.ssh/id_rsa #Before run add your public key to the server
-

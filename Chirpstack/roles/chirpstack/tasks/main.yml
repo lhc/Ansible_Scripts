@@ -1,0 +1,22 @@
+- name: Clone chirpstack docker compose
+  git:
+    repo: https://github.com/chirpstack/chirpstack-docker
+    dest: /home/ubuntu/chirpstack
+    clone: yes
+    update: yes
+    version: master
+
+
+- name: Tear Downs Docker Compose stack
+  community.docker.docker_compose:
+    project_src: "/home/{{ansible_user}}/chirpstack"
+    files: docker-compose.yml
+    state: absent        
+
+- name: Create and start services
+  community.docker.docker_compose:
+    project_src: /home/ubuntu/chirpstack
+    files: docker-compose.yml
+    state: present
+
+
