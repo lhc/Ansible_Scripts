@@ -1,15 +1,20 @@
-
 #Test Ping
 - name: Test ssh connection to the server
   ping:
 
-#Update 
+#Update and Install
 - name: Update & upgrade repository
   apt:
     update_cache: yes
     upgrade: yes
     autoremove: yes
   when: UPDATE == True
+
+- name: Install Git
+  apt:
+    name: git
+    state: present
+    update_cache: yes
 
 #Get some basic info
 - name: Get Raspberry Pi type
@@ -122,6 +127,10 @@
 - name: Disable serial
   shell: "raspi-config nonint do_serial 1"
   when: (SERIAL == False) and (serial_status.stdout != '1')
+
+#- name: Setting Fact for New IP Address
+#  set_fact:
+#    ansible_host: "192.168.1.5"
 
 #Reboot to apply configurations
 - name: Reboot host and wait for it to restart
