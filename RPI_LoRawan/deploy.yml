@@ -1,0 +1,20 @@
+- name: Single server chirpstack deployment
+  hosts: 
+    - RaspberryPi
+
+  vars_files:
+    - vars/secrets.yml  
+
+  vars:
+    UPDATE: True
+    HOSTNAME: "lorapi"
+    SERIAL: False
+    SPI: True
+    I2C: True
+
+  roles:
+    - base
+  become: "{{ become | default('yes') }}"
+
+
+
