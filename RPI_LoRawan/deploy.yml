@@ -6,11 +6,15 @@
     - vars/secrets.yml  
 
   vars:
-    UPDATE: True
+    UPDATE: False
     HOSTNAME: "lorapi"
     SERIAL: False
     SPI: True
     I2C: True
+    ipaddr: 192.168.1.4/22
+    defaultgw: 192.168.1.1
+    dns:  8.8.8.8
+
 
   roles:
     - base

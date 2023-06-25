@@ -42,26 +42,11 @@
   shell: "raspi-config nonint do_hostname {{ HOSTNAME }}"
   when: pi_hostname.stdout != HOSTNAME
 
-- name: static ip
-  copy:
+# Network
+- name: Copy file fo dhcp.conf
+  template:
+    src: files/dhcp_template.j2
     dest: /etc/dhcpcd.conf
-    owner: root
-    group: root
-    mode: 0664
-    content: |
-      hostname
-      clientid
-      persistent
-      option rapid_commit
-      option domain_name_servers, domain_name, domain_search, host_name
-      option classless_static_routes
-      option interface_mtu
-      require dhcp_server_identifier
-      slaac private
-      interface eth0
-      static ip_address=192.168.1.4/24
-      static routers=192.168.1.1
-      static domain_name_servers=8.8.8.8
 
 #2 - Interfaces options
 
@@ -127,10 +112,6 @@
 - name: Disable serial
   shell: "raspi-config nonint do_serial 1"
   when: (SERIAL == False) and (serial_status.stdout != '1')
-
-#- name: Setting Fact for New IP Address
-#  set_fact:
-#    ansible_host: "192.168.1.5"
 
 #Reboot to apply configurations
 - name: Reboot host and wait for it to restart
