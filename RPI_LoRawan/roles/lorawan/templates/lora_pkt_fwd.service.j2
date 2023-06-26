@@ -5,7 +5,7 @@ After=network-online.target
 
 [Service]
 Type=idle
-ExecStart=sudo /home/{{ansible_user}}/sx1302_hal/packet_forwarder/lora_pkt_fwd -c /home/{{ansible_user}}/sx1302_hal/packet_forwarder/global_conf.json.sx1250.AU915.json
+ExecStart=/home/{{ansible_user}}/sx1302_hal/packet_forwarder/lora_pkt_fwd -c /home/{{ansible_user}}/sx1302_hal/packet_forwarder/global_conf.json.sx1250.AU915.json
 Restart=always
 RestartSec=5
 
