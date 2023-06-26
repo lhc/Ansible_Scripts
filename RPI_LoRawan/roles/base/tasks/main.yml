@@ -45,7 +45,7 @@
 # Network
 - name: Copy file fo dhcp.conf
   template:
-    src: files/dhcp_template.j2
+    src: dhcp_template.j2
     dest: /etc/dhcpcd.conf
 
 #2 - Interfaces options

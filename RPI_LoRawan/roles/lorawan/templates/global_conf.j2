@@ -1,7 +1,7 @@
 {
     "SX130x_conf": {
-        "com_type": "USB",
-        "com_path": "/dev/ttyACM0",
+        "com_type": "SPI",
+        "com_path": "/dev/spidev0.0",
         "lorawan_public": true,
         "clksrc": 0,
         "antenna_gain": 0,
@@ -11,6 +11,7 @@
             "mode": "all_sf"
         },
         "sx1261_conf": {
+			"spi_path": "/dev/spidev0.1",
             "rssi_offset": 0,
             "spectral_scan": {
                 "enable": false,
@@ -216,8 +217,8 @@
         }
     },
     "gateway_conf": {
-        "gateway_ID": "AA555A0000000000",
-        "server_address": "localhost",
+        "gateway_ID": "{{gateway_ID}}",
+        "server_address": "{{server_address}}",
         "serv_port_up": 1700,
         "serv_port_down": 1700,
         "keepalive_interval": 10,
