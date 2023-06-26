@@ -6,6 +6,11 @@
     update: yes
     version: master
 
+- name: Copy Chirpstack gateway Bridge config
+  copy:
+    src: files/chirpstack-gateway-bridge.toml
+    dest: /home/{{ansible_user}}//chirpstack/configuration/chirpstack-gateway-bridge/
+
 
 - name: Tear Downs Docker Compose stack
   community.docker.docker_compose:

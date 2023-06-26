@@ -13,11 +13,13 @@
 - name: Copy reset_lgw.sh
   copy:
     src: files/reset_lgw.sh
+    mode: "0755"
     dest: /home/{{ansible_user}}/sx1302_hal/tools/reset_lgw.sh
 
 - name: Copy reset_lgw.sh
   copy:
     src: files/reset_lgw.sh
+    mode: "0755"
     dest: /home/{{ansible_user}}/sx1302_hal/packet_forwarder/reset_lgw.sh
 
 - name: Copy AU915.conf
