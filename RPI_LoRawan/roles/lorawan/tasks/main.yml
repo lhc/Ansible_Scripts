@@ -1,0 +1,41 @@
+- name: Clone sx1302
+  git:
+    repo: https://github.com/Lora-net/sx1302_hal
+    dest: /home/{{ansible_user}}/sx1302_hal
+    clone: yes
+    update: yes
+    version: master
+
+- name: Make sx1302
+  make:
+    chdir: /home/{{ansible_user}}/sx1302_hal
+
+- name: Copy reset_lgw.sh
+  copy:
+    src: files/reset_lgw.sh
+    mode: "0755"
+    dest: /home/{{ansible_user}}/sx1302_hal/tools/reset_lgw.sh
+
+- name: Copy reset_lgw.sh
+  copy:
+    src: files/reset_lgw.sh
+    mode: "0755"
+    dest: /home/{{ansible_user}}/sx1302_hal/packet_forwarder/reset_lgw.sh
+
+- name: Copy AU915.conf
+  template:
+    src: global_conf.j2
+    dest: /home/{{ansible_user}}/sx1302_hal/packet_forwarder/global_conf.json.sx1250.AU915.json
+
+- name: Configure Auto start for packet_forwared
+  become: yes
+  template:
+    src: lora_pkt_fwd.service.j2
+    dest: /usr/lib/systemd/system/lora_pkt_fwd.service
+
+- name: Configure packet_forwarder in systemctl
+  become: yes
+  shell: |
+    systemctl daemon-reload
+    systemctl start lora_pkt_fwd.service
+    systemctl enable lora_pkt_fwd.service

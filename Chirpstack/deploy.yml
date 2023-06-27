@@ -1,0 +1,14 @@
+- name: Single server chirpstack deployment
+  hosts: 
+    - chirpstack
+
+  vars_files:
+    - vars/secrets.yml  
+
+  roles:
+    - base
+    - chirpstack
+  become: "{{ become | default('yes') }}"
+
+
+

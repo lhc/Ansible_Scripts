@@ -1,0 +1,27 @@
+- name: Configure RaspberryPi as a LoRawan gateway
+  hosts: 
+    - RaspberryPi
+
+  vars_files:
+    - vars/secrets.yml  
+
+  vars:
+    UPDATE: False
+    HOSTNAME: "lorapi"
+    SERIAL: False
+    SPI: True
+    I2C: True
+    ipaddr: 192.168.1.4/22
+    defaultgw: 192.168.1.1
+    dns:  8.8.8.8
+    gateway_ID: AA555A0000000001
+    server_address: 134.65.251.110
+
+
+  roles:
+    #- base
+    - lorawan
+  #become: "{{ become | default('yes') }}"
+
+
+

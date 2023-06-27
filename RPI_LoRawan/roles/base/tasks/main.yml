@@ -1,0 +1,124 @@
+#Test Ping
+- name: Test ssh connection to the server
+  ping:
+
+#Update and Install
+- name: Update & upgrade repository
+  apt:
+    update_cache: yes
+    upgrade: yes
+    autoremove: yes
+  when: UPDATE == True
+
+- name: Install Git
+  apt:
+    name: git
+    state: present
+    update_cache: yes
+
+#Get some basic info
+- name: Get Raspberry Pi type
+  shell: "raspi-config nonint get_pi_type"
+  register: pi_type
+  changed_when: False
+
+- name: Show pi version
+  debug:
+    msg: "Pi version: {{ pi_type.stdout }}"
+
+#1 - Network
+
+# Hostname
+- name: Get hostname
+  shell: "raspi-config nonint get_hostname"
+  register: pi_hostname
+  changed_when: False
+
+- name: Print current hostname
+  debug:
+    msg: "Current hostname: {{ pi_hostname.stdout }}"
+
+- name: Change hostname
+  shell: "raspi-config nonint do_hostname {{ HOSTNAME }}"
+  when: pi_hostname.stdout != HOSTNAME
+
+# Network
+- name: Copy file fo dhcp.conf
+  template:
+    src: dhcp_template.j2
+    dest: /etc/dhcpcd.conf
+
+#2 - Interfaces options
+
+# SPI
+- name: Get SPI status
+  shell: "raspi-config nonint get_spi"
+  register: spi_status
+  changed_when: False
+
+- name: Print SPI status
+  debug:
+    msg: "SPI status is: {{ spi_status.stdout }}"
+
+- name: Enable SPI
+  shell: "raspi-config nonint do_spi 0"
+  when: (SPI == True) and (spi_status.stdout != '0')
+
+- name: Disable SPI
+  shell: "raspi-config nonint do_spi 1"
+  when: (SPI == False) and (spi_status.stdout != '1')
+
+# I2C
+- name: Get I2C status
+  shell: "raspi-config nonint get_i2c"
+  register: i2c_status
+  changed_when: False
+
+- name: Print I2C status
+  debug:
+    msg: "I2C status is: {{ i2c_status.stdout }}"
+
+- name: Enable I2C
+  shell: "raspi-config nonint do_i2c 0"
+  when: (I2C == True) and (i2c_status.stdout != '0')
+
+- name: Disable I2C
+  shell: "raspi-config nonint do_i2c 1"
+  when: (I2C == False) and (i2c_status.stdout != '1')
+
+# Serial
+- name: Get serial status
+  shell: "raspi-config nonint get_serial"
+  register: serial_status
+  changed_when: False
+
+- name: Get serialHW status
+  shell: "raspi-config nonint get_serial_hw"
+  register: serialhw_status
+  changed_when: False
+
+- name: Print serial status
+  debug:
+    msg: "Serial status is: {{ serial_status.stdout }}"
+
+- name: Print serialHW status
+  debug:
+    msg: "SerialHW status is: {{ serialhw_status.stdout }}"
+
+- name: Enable serial
+  shell: "raspi-config nonint do_serial 0"
+  when: (SERIAL == True) and (serial_status.stdout != '0')
+
+- name: Disable serial
+  shell: "raspi-config nonint do_serial 1"
+  when: (SERIAL == False) and (serial_status.stdout != '1')
+
+#Reboot to apply configurations
+- name: Reboot host and wait for it to restart
+  reboot:
+    msg: "Reboot initiated by Ansible"
+    connect_timeout: 5
+    reboot_timeout: 600
+    pre_reboot_delay: 0
+    post_reboot_delay: 30
+    test_command: whoami
