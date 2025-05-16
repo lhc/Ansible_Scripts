@@ -1,0 +1,34 @@
+- name: Clone RabbitMQ docker compose
+  git:
+    repo: https://github.com/lhc/rabbitmq-docker
+    dest: /home/{{ansible_user}}/rabbitmq
+    clone: yes
+    update: yes
+    force: yes
+    version: main
+  become: no
+
+- name: Create .env file
+  copy:
+    content: |
+      RABBITMQ_MQTT_USER={{broker.user}}
+      RABBITMQ_MQTT_PASSWORD={{broker.password}}
+      RABBITMQ_ADMIN_USER={{broker.admin_user}}
+      RABBITMQ_ADMIN_PASSWORD={{broker.admin_password}}
+    dest: "/home/{{ansible_user}}/rabbitmq/.env"
+    mode: '0644'
+
+- name: Tear Downs Docker Compose stack
+  community.docker.docker_compose:
+    project_src: "/home/{{ansible_user}}/rabbitmq"
+    files: docker-compose.yml
+    pull: true
+    state: absent
+
+#The parameter below are used to connect with remote postgres and values are envrypted located in secrets.yml
+- name: Run docker-compose
+  community.docker.docker_compose:
+    project_src: "/home/{{ansible_user}}/rabbitmq"
+    files: docker-compose.yml
+    state: present
+    pull: true

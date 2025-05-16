@@ -1,9 +1,10 @@
 - name: Clone chirpstack docker compose
   git:
-    repo: https://github.com/chirpstack/chirpstack-docker
-    dest: /home/ubuntu/chirpstack
+    repo: https://github.com/lhc/chirpstack-docker
+    dest: /home/{{ansible_user}}/chirpstack
     clone: yes
     update: yes
+    force: yes
     version: master
 
 - name: Copy Chirpstack gateway Bridge config
@@ -18,10 +19,15 @@
     files: docker-compose.yml
     state: absent        
 
-- name: Create and start services
-  community.docker.docker_compose:
-    project_src: /home/ubuntu/chirpstack
-    files: docker-compose.yml
-    state: present
+#The parameter below are used to connect with remote postgres and values are envrypted located in secrets.yml
+- name: Run docker-compose passing arguments
+  ansible.builtin.shell:
+    cmd: >
+      SERVER_BROKER_HOST="{{broker.host}}"
+      SERVER_BROKER_USER="{{broker.user}}"
+      SERVER_BROKER_PASS="{{broker.password}}"
+      SERVER_BROKER_TYPE="rabbitmq"
+      docker-compose up -d
+    chdir: "/home/{{ansible_user}}/chirpstack"
 
 
