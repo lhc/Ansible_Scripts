@@ -18,21 +18,78 @@
     dest: "/home/{{ansible_user}}/chirpstack/configuration/"
     mode: '0644'
 
+- name: Create .env file
+  copy:
+    content: |
+      SERVER_BROKER_HOST={{broker.host}}
+      SERVER_BROKER_USER={{broker.user}}
+      SERVER_BROKER_PASS={{broker.password}}
+      RABBITMQ_ADMIN_USER={{broker.admin_user}}
+      RABBITMQ_ADMIN_PASSWORD={{broker.admin_password}}
+    dest: "/home/{{ansible_user}}/chirpstack/.env"
+    mode: '0644'
+
 - name: Tear Downs Docker Compose stack
   community.docker.docker_compose:
     project_src: "/home/{{ansible_user}}/chirpstack"
     files: docker-compose.yml
     state: absent        
 
-- name: Run docker-compose passing arguments
-  ansible.builtin.shell:
-    cmd: >
-      SERVER_BROKER_HOST="{{broker.host}}"
-      SERVER_BROKER_USER="{{broker.user}}"
-      SERVER_BROKER_PASS="{{broker.password}}"
-      RABBITMQ_ADMIN_USER="{{broker.admin_user}}"
-      RABBITMQ_ADMIN_PASSWORD="{{broker.admin_password}}"
-      docker-compose up -d
-    chdir: "/home/{{ansible_user}}/chirpstack"
+- name: Run docker-compose
+  community.docker.docker_compose:
+    project_src: "/home/{{ansible_user}}/chirpstack"
+    files: docker-compose.yml
+    state: present
+    pull: true
+
+- name: Wait for RabbitMQ to be ready
+  wait_for:
+    host: "{{inventory_hostname}}"
+    port: 15672
+    timeout: 60
+
+- name: Create MQTT user
+  uri:
+    url: "http://{{inventory_hostname}}:15672/api/users/{{broker.user}}"
+    method: PUT
+    user: "{{broker.admin_user}}"
+    password: "{{broker.admin_password}}"
+    body_format: json
+    body: |
+      {
+        "password": "{{broker.password}}",
+        "tags": "mqtt"
+      }
+    status_code: [201, 204]
+    force_basic_auth: yes
+
+- name: Create chirpstack vhost
+  uri:
+    url: "http://{{inventory_hostname}}:15672/api/vhosts/%2Fchirpstack"
+    method: PUT
+    user: "{{broker.admin_user}}"
+    password: "{{broker.admin_password}}"
+    status_code: [201, 204]
+    force_basic_auth: yes
+
+- name: Set permissions for MQTT user
+  uri:
+    url: "http://{{inventory_hostname}}:15672/api/permissions/%2F/chirpstack"
+    method: PUT
+    user: "{{broker.admin_user}}"
+    password: "{{broker.admin_password}}"
+    force_basic_auth: yes
+    body_format: json
+    body: |
+      {
+        "configure": ".*",
+        "write": ".*",
+        "read": ".*"
+      }
+    status_code: [200, 201, 204]
+  register: set_permissions
+  until: set_permissions.status in [200, 201, 204]
+  retries: 5
+  delay: 5
 
 
