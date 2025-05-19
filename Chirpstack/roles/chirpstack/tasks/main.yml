@@ -10,8 +10,13 @@
 - name: Copy Chirpstack gateway Bridge config
   copy:
     src: files/chirpstack-gateway-bridge.toml
-    dest: /home/{{ansible_user}}//chirpstack/configuration/chirpstack-gateway-bridge/
+    dest: /home/{{ansible_user}}/chirpstack/configuration/chirpstack-gateway-bridge/
 
+- name: Copy RabbitMQ configuration
+  copy:
+    src: "{{playbook_dir}}/chirpstack-docker-lhc/configuration/rabbitmq"
+    dest: "/home/{{ansible_user}}/chirpstack/configuration/"
+    mode: '0644'
 
 - name: Tear Downs Docker Compose stack
   community.docker.docker_compose:
@@ -19,14 +24,14 @@
     files: docker-compose.yml
     state: absent        
 
-#The parameter below are used to connect with remote postgres and values are envrypted located in secrets.yml
 - name: Run docker-compose passing arguments
   ansible.builtin.shell:
     cmd: >
       SERVER_BROKER_HOST="{{broker.host}}"
       SERVER_BROKER_USER="{{broker.user}}"
       SERVER_BROKER_PASS="{{broker.password}}"
-      SERVER_BROKER_TYPE="rabbitmq"
+      RABBITMQ_ADMIN_USER="{{broker.admin_user}}"
+      RABBITMQ_ADMIN_PASSWORD="{{broker.admin_password}}"
       docker-compose up -d
     chdir: "/home/{{ansible_user}}/chirpstack"
 
