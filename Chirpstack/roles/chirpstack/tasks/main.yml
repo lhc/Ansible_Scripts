@@ -12,12 +12,6 @@
     src: files/chirpstack-gateway-bridge.toml
     dest: /home/{{ansible_user}}/chirpstack/configuration/chirpstack-gateway-bridge/
 
-- name: Copy RabbitMQ configuration
-  copy:
-    src: "{{playbook_dir}}/chirpstack-docker-lhc/configuration/rabbitmq"
-    dest: "/home/{{ansible_user}}/chirpstack/configuration/"
-    mode: '0644'
-
 - name: Create .env file
   copy:
     content: |
@@ -89,6 +83,26 @@
     status_code: [200, 201, 204]
   register: set_permissions
   until: set_permissions.status in [200, 201, 204]
+  retries: 5
+  delay: 5
+
+- name: Set permissions for chirpstack user on chirpstack vhost
+  uri:
+    url: "http://{{inventory_hostname}}:15672/api/permissions/%2Fchirpstack/{{broker.user}}"
+    method: PUT
+    user: "{{broker.admin_user}}"
+    password: "{{broker.admin_password}}"
+    force_basic_auth: yes
+    body_format: json
+    body: |
+      {
+        "configure": ".*",
+        "write": ".*",
+        "read": ".*"
+      }
+    status_code: [200, 201, 204]
+  register: set_chirpstack_permissions
+  until: set_chirpstack_permissions.status in [200, 201, 204]
   retries: 5
   delay: 5
 

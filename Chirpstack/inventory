@@ -1,5 +1,5 @@
 [chirpstack]
-134.65.251.110     
+201.23.16.14  
 
 [chirpstack:vars]
 ansible_user = ubuntu
