@@ -38,6 +38,11 @@ This project contains Ansible playbooks and configurations for deploying and man
 - Docker and Docker Compose
 - SSH access to target servers
 
+## Install
+```
+    apt install python3.12-venv
+```
+
 ## Environment Setup
 
 1. Clone the repository:
