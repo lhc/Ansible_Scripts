@@ -41,6 +41,7 @@ This project contains Ansible playbooks and configurations for deploying and man
 ## Install
 ```
     apt install python3.12-venv
+    apt-get install pip
 ```
 
 ## Environment Setup
@@ -63,7 +64,7 @@ source chirpstack_env/bin/activate
 .\chirpstack_env\Scripts\activate
 
 # Verify Python version
-python --version
+python3 --version
 
 # Upgrade pip
 pip install --upgrade pip
