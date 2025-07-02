@@ -1,14 +1,18 @@
 - name: Single server chirpstack deployment
-  hosts: 
+  hosts:
     - chirpstack
-
+  become: "{{ become | default('yes') }}"
   vars_files:
-    - vars/secrets.yml  
+    - vars/secrets.yml
+
+  tasks:
+    - name: Adiciona chave GPG do Docker manualmente
+      ansible.builtin.shell: |
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+      args:
+        creates: /usr/share/keyrings/docker-archive-keyring.gpg
+      become: true
 
   roles:
     - base
     - chirpstack
-  become: "{{ become | default('yes') }}"
-
-
-
