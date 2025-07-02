@@ -31,22 +31,20 @@ This directory contains Ansible playbooks and configurations for deploying a com
 - Improves performance for frequently accessed data
 
 ## Prerequisites
-
 - Ansible 2.9 or higher
 - Python 3.6 or higher
 - Docker and Docker Compose
 - SSH access to target servers
 
-
 ## Deployment
 
 ```bash
 # Make sure your virtual environment is activated
-source ../chirpstack_env/bin/activate  # Linux/macOS
+source chirpstack_env/bin/activate  # Linux/macOS
 ..\chirpstack_env\Scripts\activate    # Windows
 
 # Run the playbook
-ansible-playbook -i inventory deploy.yml
+ansible-playbook -i inventory deploy.yml --ask-pass --ask-become-pass
 ```
 
 This will deploy:
