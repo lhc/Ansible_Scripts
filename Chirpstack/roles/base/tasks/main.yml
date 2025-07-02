@@ -1,20 +1,22 @@
 - name: Test ssh connection to the server
   ping:
-    
+
 - name: Update & upgrade repository
   apt:
     update_cache: yes
     upgrade: yes
     autoremove: yes
 
-- name: Add Docker GPG apt Key
-  apt_key:
-    url: https://download.docker.com/linux/ubuntu/gpg
-    state: present
+- name: Add Docker GPG apt Key manually
+  ansible.builtin.shell: |
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+  args:
+    creates: /usr/share/keyrings/docker-archive-keyring.gpg
+  become: true
 
-- name: Add Docker Repository
+- name: Add Docker Repository with signed-by option
   apt_repository:
-    repo: deb https://download.docker.com/linux/ubuntu focal stable
+    repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu focal stable"
     state: present
 
 - name: Update apt and install docker-ce
