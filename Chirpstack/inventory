@@ -1,8 +1,8 @@
 [chirpstack]
-201.23.16.14  
+192.168.0.1 ansible_user=user ansible_ssh_pass=senha_ssh ansible_become=true ansible_become_pass=senha_sudo
 
 [chirpstack:vars]
-ansible_user = ubuntu
+ansible_user = user
 #Change corresponding to the user o the VM
 
 
