@@ -106,4 +106,83 @@
   retries: 5
   delay: 5
 
+# --- Início das Novas Configurações de Serviços ---
 
+- name: Create directory for Node-RED data
+  ansible.builtin.file:
+    path: "/home/{{ansible_user}}/node-red/data"
+    state: directory
+    mode: '0755'
+    owner: "{{ansible_user}}"
+    group: "{{ansible_user}}"
+
+- name: Create docker-compose file for Node-RED
+  ansible.builtin.copy:
+    dest: "/home/{{ansible_user}}/node-red/docker-compose.yml"
+    content: |
+      version: '3.8'
+      services:
+        node-red:
+          image: nodered/node-red:latest
+          container_name: node-red
+          ports:
+            - "1880:1880" # Porta para acessar o Node-RED (http://<seu_ip>:1880)
+          volumes:
+            - ./data:/data # Volume persistente para os flows do Node-RED
+          restart: unless-stopped # Reinicia o container a menos que seja parado manualmente
+    mode: '0644' # Permissões do arquivo
+
+- name: Run Node-RED docker-compose stack
+  community.docker.docker_compose:
+    project_src: "/home/{{ansible_user}}/node-red" # Diretório do projeto Node-RED
+    files: docker-compose.yml # Nome do arquivo docker-compose
+    state: present # Garante que o serviço esteja rodando
+    pull: true # Garante que a imagem mais recente do Node-RED seja baixada
+
+- name: Create directory for Monitoring (Grafana, RabbitMQ Exporter) data
+  ansible.builtin.file:
+    path: "/home/{{ansible_user}}/monitoring/grafana_data"
+    state: directory
+    mode: '0755'
+    owner: "{{ansible_user}}"
+    group: "{{ansible_user}}"
+
+- name: Create docker-compose file for Monitoring services
+  ansible.builtin.copy:
+    dest: "/home/{{ansible_user}}/monitoring/docker-compose.yml"
+    content: |
+      version: '3.8'
+      services:
+        grafana:
+          image: grafana/grafana:latest
+          container_name: grafana
+          ports:
+            - "3000:3000"
+          volumes:
+            - ./grafana_data:/var/lib/grafana
+          restart: unless-stopped
+          user: "1000"
+          environment:
+            GF_SECURITY_ADMIN_USER: admin
+            GF_SECURITY_ADMIN_PASSWORD: sua_senha_segura
+
+        rabbitmq_exporter:
+          image: kbudde/rabbitmq-exporter
+          container_name: rabbitmq-exporter
+          ports:
+            - "9090:9090"
+          environment:
+            RABBIT_URL: "http://{{inventory_hostname}}:15672"
+            RABBIT_USER: "{{broker.admin_user}}"
+            RABBIT_PASSWORD: "{{broker.admin_password}}"
+          restart: unless-stopped
+    mode: '0644'
+
+- name: Run Monitoring services docker-compose stack
+  community.docker.docker_compose:
+    project_src: "/home/{{ansible_user}}/monitoring" # Diretório dos serviços de monitoramento
+    files: docker-compose.yml # Nome do arquivo docker-compose
+    state: present # Garante que os serviços estejam rodando
+    pull: true # Garante que as imagens mais recentes sejam baixadas
+
+# --- Fim das Novas Configurações de Serviços ---
