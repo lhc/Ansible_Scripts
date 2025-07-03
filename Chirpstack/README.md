@@ -43,6 +43,12 @@ This directory contains Ansible playbooks and configurations for deploying a com
 
 ## Deployment
 
+## prerequisite client running ansible 
+```
+apt install pkcs11_provider
+apt install sshpass
+```
+
 ```bash
 # Make sure your virtual environment is activated
 source chirpstack_env/bin/activate  # Linux/macOS
