@@ -36,6 +36,11 @@ This directory contains Ansible playbooks and configurations for deploying a com
 - Docker and Docker Compose
 - SSH access to target servers
 
+## Grafana
+
+## Node-Red
+
+
 ## Deployment
 
 ```bash
@@ -61,6 +66,12 @@ This will deploy:
 ### RabbitMQ
 - Management interface: `http://<server-ip>:15672`
 - Default credentials: defined in screts.yml
+
+### Node-Red
+- Port : 1880
+
+### Grafana
+- Port: 3000
 
 ## Troubleshooting
 
