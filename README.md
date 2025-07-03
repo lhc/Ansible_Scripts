@@ -21,10 +21,11 @@ This project contains Ansible playbooks and configurations for deploying and man
 
 ## Components Overview
 
-- **Chirpstack**: LoRaWAN Network Server
+- **Chirpstack**: LoRaWAN Network Server and some more services
   - [Detailed Documentation](Chirpstack/README.md)
   - Handles device management and message routing
   - Integrates with RabbitMQ for event handling
+  - and some more services (node-red, prometheus explorer)
 
 - **Raspberry Pi LoRaWAN Gateway**
   - [Detailed Documentation](RPI_LoRawan/README.md)
