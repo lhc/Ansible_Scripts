@@ -1,9 +1,7 @@
 # LHC Ansible Project
-
 This project contains Ansible playbooks and configurations for deploying and managing LoRaWAN infrastructure components, including Chirpstack, RabbitMQ, and Raspberry Pi LoRaWAN gateways.
 
 ## Project Structure
-
 ```
 .
 ├── Chirpstack/              # Chirpstack deployment and configuration
@@ -81,13 +79,10 @@ pip install -r requirements.txt
 
 ```
 $ cd Ansible_Scripts/Chirpstack
-
-$  ansible-playbook -i inventory deploy.yml --ask-pass --ask-become-pass
+$ ansible-playbook -i inventory deploy.yml --ask-pass --ask-become-pass
 ```
 
-
 ## Contributing
-
 1. Fork the repository
 2. Create a feature branch
 3. Commit your changes
