@@ -34,12 +34,12 @@ This project contains Ansible playbooks and configurations for deploying and man
 
 ## Prerequisites
 
-- Ansible 2.9 or higher
-- Python 3.6 or higher
+- Ansible 6.3
+- Python 3.12
 - Docker and Docker Compose
 - SSH access to target servers
 
-## Install
+## Install (on local)
 ```
     apt install python3.12-venv
     apt-get install pip
@@ -84,7 +84,6 @@ $ cd Ansible_Scripts/Chirpstack
 
 $  ansible-playbook -i inventory deploy.yml --ask-pass --ask-become-pass
 ```
-
 
 
 ## Contributing
