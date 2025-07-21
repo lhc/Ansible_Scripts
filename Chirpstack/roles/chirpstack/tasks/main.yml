@@ -7,11 +7,12 @@
     force: yes
     version: master
 
-- name: Garantir que python3-distutils esteja instalado
-  ansible.builtin.apt:
-    name: python3-distutils
+- name: Garantir que python3-venv e pip estejam instalados
+  apt:
+    name:
+      - python3-venv
+      - python3-pip
     state: present
-    update_cache: yes
 
 - name: Copy Chirpstack gateway Bridge config
   copy:
