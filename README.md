@@ -77,6 +77,16 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
+## Run Ansible playbook
+
+```
+$ cd Ansible_Scripts/Chirpstack
+
+$  ansible-playbook -i inventory deploy.yml --ask-pass --ask-become-pass
+```
+
+
+
 ## Contributing
 
 1. Fork the repository
