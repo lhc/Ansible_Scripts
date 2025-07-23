@@ -36,6 +36,11 @@
     files: docker-compose.yml
     state: absent        
 
+- name: Clean up large Docker logs
+  shell: |
+    sudo find /var/lib/docker/containers/ -name '*-json.log' -size +1M -exec truncate -s 0 {} \;
+  become: yes
+
 - name: Run docker-compose
   community.docker.docker_compose:
     project_src: "/home/{{ansible_user}}/chirpstack"
