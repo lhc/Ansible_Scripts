@@ -16,3 +16,5 @@
   roles:
     - base
     - chirpstack
+    - nodered
+    - monitoring

@@ -30,24 +30,31 @@ This directory contains Ansible playbooks and configurations for deploying a com
 - Caching layer for Chirpstack
 - Improves performance for frequently accessed data
 
+### Node-RED
+- Flow-based programming tool for IoT applications
+- Web-based editor for creating automation workflows
+- Integrates with Chirpstack and MQTT brokers
+- Accessible on port 1880
+
+### Monitoring Stack
+- **Grafana**: Data visualization and monitoring platform (port 3000)
+- **RabbitMQ Exporter**: Prometheus exporter for RabbitMQ metrics (port 9090)
+
 ## Prerequisites
 - Ansible 2.9 or higher
 - Python 3.6 or higher
 - Docker and Docker Compose
 - SSH access to target servers
 
-## Grafana
+## Prerequisites
 
-## Node-Red
-
-
-## Deployment
-
-## prerequisite client running ansible 
-```
+### Client Machine (Running Ansible)
+```bash
 apt install pkcs11_provider
 apt install sshpass
 ```
+
+## Deployment
 
 ```bash
 # Make sure your virtual environment is activated
@@ -64,6 +71,11 @@ This will deploy:
 - Mosquitto MQTT broker
 - PostgreSQL database
 - Redis cache
+- Node-RED flow editor
+- Grafana monitoring
+- RabbitMQ Exporter
+
+## Service Access
 
 ### Chirpstack
 - Web interface: `http://<server-ip>:8080`
@@ -73,11 +85,16 @@ This will deploy:
 - Management interface: `http://<server-ip>:15672`
 - Default credentials: defined in screts.yml
 
-### Node-Red
-- Port : 1880
+### Node-RED
+- Web interface: `http://<server-ip>:1880`
+- No default credentials (configure on first access)
 
 ### Grafana
-- Port: 3000
+- Web interface: `http://<server-ip>:3000`
+- Default credentials: admin/sua_senha_segura
+
+### RabbitMQ Exporter
+- Metrics endpoint: `http://<server-ip>:9090/metrics`
 
 ## Troubleshooting
 

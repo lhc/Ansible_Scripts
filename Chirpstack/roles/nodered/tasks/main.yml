@@ -1,0 +1,30 @@
+- name: Create directory for Node-RED data
+  ansible.builtin.file:
+    path: "/home/{{ansible_user}}/node-red/data"
+    state: directory
+    mode: '0755'
+    owner: "{{ansible_user}}"
+    group: "{{ansible_user}}"
+
+- name: Create docker-compose file for Node-RED
+  ansible.builtin.copy:
+    dest: "/home/{{ansible_user}}/node-red/docker-compose.yml"
+    content: |
+      version: '3.8'
+      services:
+        node-red:
+          image: nodered/node-red:latest
+          container_name: node-red
+          ports:
+            - "1880:1880"
+          volumes:
+            - ./data:/data
+          restart: unless-stopped
+    mode: '0644'
+
+- name: Run Node-RED docker-compose stack
+  community.docker.docker_compose:
+    project_src: "/home/{{ansible_user}}/node-red"
+    files: docker-compose.yml
+    state: present
+    pull: true 

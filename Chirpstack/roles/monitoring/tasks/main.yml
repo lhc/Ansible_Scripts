@@ -1,0 +1,45 @@
+- name: Create directory for Monitoring (Grafana, RabbitMQ Exporter) data
+  ansible.builtin.file:
+    path: "/home/{{ansible_user}}/monitoring/grafana_data"
+    state: directory
+    mode: '0755'
+    owner: "{{ansible_user}}"
+    group: "{{ansible_user}}"
+
+- name: Create docker-compose file for Monitoring services
+  ansible.builtin.copy:
+    dest: "/home/{{ansible_user}}/monitoring/docker-compose.yml"
+    content: |
+      version: '3.8'
+      services:
+        grafana:
+          image: grafana/grafana:latest
+          container_name: grafana
+          ports:
+            - "3000:3000"
+          volumes:
+            - ./grafana_data:/var/lib/grafana
+          restart: unless-stopped
+          user: "1000"
+          environment:
+            GF_SECURITY_ADMIN_USER: admin
+            GF_SECURITY_ADMIN_PASSWORD: sua_senha_segura
+
+        rabbitmq_exporter:
+          image: kbudde/rabbitmq-exporter
+          container_name: rabbitmq-exporter
+          ports:
+            - "9090:9090"
+          environment:
+            RABBIT_URL: "http://{{inventory_hostname}}:15672"
+            RABBIT_USER: "{{broker.admin_user}}"
+            RABBIT_PASSWORD: "{{broker.admin_password}}"
+          restart: unless-stopped
+    mode: '0644'
+
+- name: Run Monitoring services docker-compose stack
+  community.docker.docker_compose:
+    project_src: "/home/{{ansible_user}}/monitoring"
+    files: docker-compose.yml
+    state: present
+    pull: true 

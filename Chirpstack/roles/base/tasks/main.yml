@@ -61,3 +61,10 @@
     dest: /etc/docker/daemon.json
     mode: '0644'
   notify: restart docker
+
+- name: Install Python dependencies
+  apt:
+    name:
+      - python3-venv
+      - python3-pip
+    state: present
